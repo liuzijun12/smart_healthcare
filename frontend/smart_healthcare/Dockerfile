@@ -7,6 +7,9 @@ WORKDIR /app
 # 复制 package 文件
 COPY package*.json ./
 
+# 配置 npm 使用国内镜像源（淘宝源）
+RUN npm config set registry https://registry.npmmirror.com
+
 # 安装依赖
 RUN npm ci
 
