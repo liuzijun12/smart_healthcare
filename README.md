@@ -359,7 +359,7 @@ chore: 构建/工具链相关
 如果遇到问题：
 1. 查看 [DEPLOYMENT.md](./DEPLOYMENT.md) 中的常见问题
 2. 查看 GitHub Issues
-3. 查看容器日志：`cd docker && docker-compose logs -f`
+3. 查看容器日志：`docker-compose -f docker/docker-compose.yaml logs -f`
 
 ## 📄 许可证
 
