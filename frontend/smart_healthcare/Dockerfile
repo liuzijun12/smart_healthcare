@@ -1,5 +1,5 @@
-# 构建阶段
-FROM node:20-alpine as build-stage
+# 使用 Node.js 镜像
+FROM node:20-alpine
 
 # 配置 Alpine 国内镜像源（清华源）
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
@@ -19,21 +19,8 @@ RUN npm ci
 # 复制项目文件
 COPY . .
 
-# 构建应用（包含类型检查，确保代码质量）
-RUN npm run build
+# 暴露 Vite 开发服务器端口
+EXPOSE 5173
 
-# 生产阶段
-FROM nginx:alpine as production-stage
-
-# 配置 Alpine 国内镜像源（清华源）
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
-
-# 复制构建后的文件到 nginx（使用默认配置）
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-# 暴露端口
-EXPOSE 80
-
-# 启动 nginx（使用默认配置）
-CMD ["nginx", "-g", "daemon off;"]
-
+# 启动 Vite 开发服务器（监听所有网络接口）
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
