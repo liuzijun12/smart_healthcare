@@ -106,7 +106,7 @@ services:
     container_name: smart_healthcare_frontend
     restart: always
     ports:
-      - "80:80"
+      - "5173:80"
     networks:
       - healthcare_network
     depends_on:

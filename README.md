@@ -125,7 +125,7 @@ docker-compose logs -f
 
 ### 访问地址
 
-- **前端应用**: http://localhost
+- **前端应用**: http://localhost:5173
 - **后端 API**: http://localhost:8080
 - **后端管理**: http://localhost:8080/admin
 - **数据库管理**: http://localhost:8081
@@ -153,7 +153,7 @@ cd docker
 docker-compose up -d
 
 # 4. 访问应用
-# 前端: http://localhost
+# 前端: http://localhost:5173
 # 后端: http://localhost:8080/admin
 ```
 
