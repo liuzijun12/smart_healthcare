@@ -9,13 +9,13 @@ services:
     env_file:
       - ../.env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${DB_NAME:-smart_healthcare}
-      MYSQL_USER: ${DB_USER:-healthcare_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-healthcare_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       TZ: Asia/Shanghai
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "${DB_PORT}:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
@@ -23,7 +23,7 @@ services:
     networks:
       - healthcare_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,8 +54,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123456}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       TZ: Asia/Shanghai
     volumes:
       - ./minio_data:/data
@@ -83,7 +83,7 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       # MinIO 端点（覆盖 .env 中的配置）
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-minio:9000}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
       # 时区配置
       TZ: Asia/Shanghai
     ports:
