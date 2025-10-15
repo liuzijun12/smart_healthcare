@@ -6,6 +6,8 @@ services:
     image: mysql:8.0
     container_name: smart_healthcare_mysql
     restart: always
+    env_file:
+      - ../.env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
       MYSQL_DATABASE: ${DB_NAME:-smart_healthcare}
@@ -46,6 +48,8 @@ services:
     image: minio/minio:latest
     container_name: smart_healthcare_minio
     restart: always
+    env_file:
+      - ../.env
     ports:
       - "9000:9000"
       - "9001:9001"
