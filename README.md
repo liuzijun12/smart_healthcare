@@ -127,7 +127,7 @@ docker-compose logs -f
 
 - **前端应用**: http://localhost
 - **后端 API**: http://localhost:8000
-- **后端管理**: http://localhost:8000/admin (默认账号: admin / admin123456)
+- **后端管理**: http://localhost:8000/admin 
 - **数据库管理**: http://localhost:8080
 - **MinIO 控制台**: http://localhost:9001
 

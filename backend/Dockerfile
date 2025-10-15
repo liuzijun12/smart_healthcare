@@ -40,36 +40,12 @@ RUN mkdir -p staticfiles
 # 收集静态文件（如果失败也继续）
 RUN python manage.py collectstatic --noinput || true
 
+# 复制并设置启动脚本
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # 暴露端口
 EXPOSE 8000
-
-# 创建启动脚本
-RUN echo '#!/bin/bash\n\
-set -e\n\
-\n\
-echo "⏳ 等待数据库准备就绪..."\n\
-while ! nc -z mysql 3306; do\n\
-  sleep 1\n\
-done\n\
-echo "✅ 数据库已就绪！"\n\
-\n\
-echo "🔄 执行数据库迁移..."\n\
-python manage.py migrate --noinput\n\
-\n\
-echo "👤 创建超级用户（如果不存在）..."\n\
-python manage.py shell << END\n\
-from django.contrib.auth import get_user_model\n\
-User = get_user_model()\n\
-if not User.objects.filter(username="admin").exists():\n\
-    User.objects.create_superuser("admin", "admin@example.com", "admin123456")\n\
-    print("超级用户创建成功！用户名: admin, 密码: admin123456")\n\
-else:\n\
-    print("超级用户已存在")\n\
-END\n\
-\n\
-echo "🚀 启动 Django 服务..."\n\
-python manage.py runserver 0.0.0.0:8000\n\
-' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # 运行启动脚本
 CMD ["/app/entrypoint.sh"]
