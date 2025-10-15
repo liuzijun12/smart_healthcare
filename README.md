@@ -126,9 +126,9 @@ docker-compose logs -f
 ### 访问地址
 
 - **前端应用**: http://localhost
-- **后端 API**: http://localhost:8000
-- **后端管理**: http://localhost:8000/admin 
-- **数据库管理**: http://localhost:8080
+- **后端 API**: http://localhost:8080
+- **后端管理**: http://localhost:8080/admin
+- **数据库管理**: http://localhost:8081
 - **MinIO 控制台**: http://localhost:9001
 
 ## 💻 本地开发环境
@@ -154,7 +154,7 @@ docker-compose up -d
 
 # 4. 访问应用
 # 前端: http://localhost
-# 后端: http://localhost:8000/admin
+# 后端: http://localhost:8080/admin
 ```
 
 ### 方式二：本地开发模式
@@ -341,7 +341,7 @@ chore: 构建/工具链相关
 ## 📝 相关文档
 
 - [部署文档](./DEPLOYMENT.md) - 详细的自动化部署指南
-- [API 文档](http://localhost:8000/api/docs) - 后端 API 接口文档
+- [API 文档](http://localhost:8080/api/docs) - 后端 API 接口文档
 - [前端路由](./frontend/smart_healthcare/src/router/index.ts) - 前端路由配置
 
 ## 🤝 贡献指南

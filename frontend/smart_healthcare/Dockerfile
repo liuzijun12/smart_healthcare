@@ -45,7 +45,7 @@ RUN echo 'server {\n\
     \n\
     # 代理后端 API 请求\n\
     location /api/ {\n\
-        proxy_pass http://backend:8000;\n\
+        proxy_pass http://backend:8080;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
@@ -57,7 +57,7 @@ RUN echo 'server {\n\
     \n\
     # 代理 Django Admin\n\
     location /admin/ {\n\
-        proxy_pass http://backend:8000;\n\
+        proxy_pass http://backend:8080;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
@@ -66,7 +66,7 @@ RUN echo 'server {\n\
     \n\
     # 代理静态文件\n\
     location /static/ {\n\
-        proxy_pass http://backend:8000;\n\
+        proxy_pass http://backend:8080;\n\
         proxy_set_header Host $host;\n\
     }\n\
     \n\

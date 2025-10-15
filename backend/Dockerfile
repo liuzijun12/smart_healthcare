@@ -45,7 +45,7 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # 暴露端口
-EXPOSE 8000
+EXPOSE 8080
 
 # 运行启动脚本
 CMD ["/app/entrypoint.sh"]
