@@ -19,7 +19,7 @@ RUN npm ci
 # 复制项目文件
 COPY . .
 
-# 构建应用
+# 构建应用（包含类型检查，确保代码质量）
 RUN npm run build
 
 # 生产阶段
