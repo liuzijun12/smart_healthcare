@@ -13,22 +13,31 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# 加载环境变量
+# Docker 环境下会通过 docker-compose 的 env_file 加载
+# 本地开发时从项目根目录的 .env 文件加载
+env_path = BASE_DIR.parent / '.env'  # 指向项目根目录的 .env
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+else:
+    load_dotenv()  # 尝试从当前目录加载
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0(p5zxm3a9=90xgykg^f$!exq&of0e6b-__7av(%)#g1jdjvt%'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-0(p5zxm3a9=90xgykg^f$!exq&of0e6b-__7av(%)#g1jdjvt%')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+# 允许的主机
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -110,9 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'zh-hans')
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.getenv('TIMEZONE', 'Asia/Shanghai')
 
 USE_I18N = True
 
@@ -122,9 +131,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Media files (用户上传的文件)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS 配置（如果需要跨域访问）
+# 可以通过 pip install django-cors-headers 安装
+# INSTALLED_APPS 中添加 'corsheaders'
+# MIDDLEWARE 中添加 'corsheaders.middleware.CorsMiddleware'
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # 开发环境允许所有源，生产环境需要指定
+
+# CSRF 配置
+CSRF_TRUSTED_ORIGINS = [
+    f'http://{host}' for host in ALLOWED_HOSTS if host not in ['*', 'localhost', '127.0.0.1']
+] + [
+    f'https://{host}' for host in ALLOWED_HOSTS if host not in ['*', 'localhost', '127.0.0.1']
+]

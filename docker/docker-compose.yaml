@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: smart_healthcare_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-smart_healthcare}
+      MYSQL_USER: ${DB_USER:-healthcare_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-healthcare_password}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - healthcare_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 数据库管理工具 Adminer
+  adminer:
+    image: adminer
+    container_name: smart_healthcare_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      ADMINER_DESIGN: nette
+    networks:
+      - healthcare_network
+    depends_on:
+      - mysql
+
+  # MinIO 对象存储服务（用于图片存储）
+  minio:
+    image: minio/minio:latest
+    container_name: smart_healthcare_minio
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123456}
+      TZ: Asia/Shanghai
+    volumes:
+      - ./minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - healthcare_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Django 后端服务
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    image: smart_healthcare_backend:latest
+    container_name: smart_healthcare_backend
+    restart: always
+    env_file:
+      - ../.env
+    environment:
+      # 数据库主机（覆盖 .env 中的配置，确保使用容器名）
+      DB_HOST: mysql
+      DB_PORT: 3306
+      # MinIO 端点（覆盖 .env 中的配置）
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-minio:9000}
+      # 时区配置
+      TZ: Asia/Shanghai
+    ports:
+      - "8000:8000"
+    volumes:
+      # 挂载代码目录（开发环境，生产环境可以移除）
+      - ../backend:/app
+      # 挂载模型文件（确保模型文件持久化）
+      - ../backend/app_ai/best_models:/app/app_ai/best_models
+    networks:
+      - healthcare_network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  # Vue.js 前端服务
+  frontend:
+    build:
+      context: ../frontend/smart_healthcare
+      dockerfile: Dockerfile
+    image: smart_healthcare_frontend:latest
+    container_name: smart_healthcare_frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - healthcare_network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  healthcare_network:
+    driver: bridge
+    name: smart_healthcare_network

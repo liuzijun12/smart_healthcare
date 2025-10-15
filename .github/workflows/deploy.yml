@@ -38,31 +38,26 @@ jobs:
             git reset --hard origin/main || git reset --hard origin/master
             git pull origin main || git pull origin master
             
+            # 检查 .env 文件
+            if [ ! -f .env ]; then
+              echo "❌ 错误: .env 文件不存在，请先配置环境变量"
+              exit 1
+            fi
+            
             # 进入 Docker 目录
-            cd backend/docker
+            cd docker
             
             # 停止现有容器
             echo "⏸️  停止现有容器..."
             docker-compose down
             
-            # 构建后端镜像
-            echo "🔨 构建后端镜像..."
-            cd ..
-            docker build -t smart_healthcare_backend:latest -f Dockerfile .
-            
-            # 构建前端镜像
-            echo "🔨 构建前端镜像..."
-            cd ../frontend/smart_healthcare
-            docker build -t smart_healthcare_frontend:latest -f Dockerfile .
-            
             # 清理未使用的镜像
             echo "🧹 清理未使用的镜像..."
             docker image prune -f
             
-            # 启动所有服务
-            echo "🚀 启动所有服务..."
-            cd ../../backend/docker
-            docker-compose up -d
+            # 重新构建并启动所有服务
+            echo "🔨 构建镜像并启动服务..."
+            docker-compose up -d --build
             
             # 等待服务启动
             echo "⏳ 等待服务启动..."
