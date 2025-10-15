@@ -110,17 +110,14 @@ git push origin main  # 自动触发部署
 # 1. 配置环境变量
 cp .env.example .env
 
-# 2. 进入 docker 目录
-cd docker
+# 2. 启动所有服务（在根目录运行，明确指定 env 文件）
+docker-compose -f docker/docker-compose.yaml --env-file .env up -d
 
-# 3. 启动所有服务
-docker-compose up -d
+# 3. 查看服务状态
+docker-compose -f docker/docker-compose.yaml --env-file .env ps
 
-# 4. 查看服务状态
-docker-compose ps
-
-# 5. 查看日志
-docker-compose logs -f
+# 4. 查看日志
+docker-compose -f docker/docker-compose.yaml --env-file .env logs -f
 ```
 
 ### 访问地址
@@ -148,9 +145,8 @@ cd smart_healthcare
 # 2. 配置环境变量
 cp .env.example .env
 
-# 3. 启动所有服务
-cd docker
-docker-compose up -d
+# 3. 启动所有服务（在根目录运行，明确指定 env 文件）
+docker-compose -f docker/docker-compose.yaml --env-file .env up -d
 
 # 4. 访问应用
 # 前端: http://localhost:5173
@@ -233,23 +229,23 @@ smart_healthcare/
 
 ### Docker 相关
 ```bash
-# 查看服务状态
-cd docker && docker-compose ps
+# 查看服务状态（在根目录运行，明确指定 env 文件）
+docker-compose -f docker/docker-compose.yaml --env-file .env ps
 
 # 查看日志
-docker-compose logs -f
-docker-compose logs -f backend
-docker-compose logs -f frontend
+docker-compose -f docker/docker-compose.yaml --env-file .env logs -f
+docker-compose -f docker/docker-compose.yaml --env-file .env logs -f backend
+docker-compose -f docker/docker-compose.yaml --env-file .env logs -f frontend
 
 # 重启服务
-docker-compose restart backend
-docker-compose restart frontend
+docker-compose -f docker/docker-compose.yaml --env-file .env restart backend
+docker-compose -f docker/docker-compose.yaml --env-file .env restart frontend
 
 # 停止服务
-docker-compose down
+docker-compose -f docker/docker-compose.yaml --env-file .env down
 
 # 重新构建并启动
-docker-compose up -d --build
+docker-compose -f docker/docker-compose.yaml --env-file .env up -d --build
 
 # 进入容器
 docker exec -it smart_healthcare_backend bash
@@ -359,7 +355,7 @@ chore: 构建/工具链相关
 如果遇到问题：
 1. 查看 [DEPLOYMENT.md](./DEPLOYMENT.md) 中的常见问题
 2. 查看 GitHub Issues
-3. 查看容器日志：`docker-compose -f docker/docker-compose.yaml logs -f`
+3. 查看容器日志：`docker-compose -f docker/docker-compose.yaml --env-file .env logs -f`
 
 ## 📄 许可证
 

@@ -44,17 +44,17 @@ jobs:
               exit 1
             fi
             
-            # 停止现有容器（在根目录运行，使用 -f 指定 compose 文件）
+            # 停止现有容器（在根目录运行，明确指定 compose 文件和 env 文件）
             echo "⏸️  停止现有容器..."
-            docker-compose -f docker/docker-compose.yaml down
+            docker-compose -f docker/docker-compose.yaml --env-file .env down
             
             # 清理未使用的镜像
             echo "🧹 清理未使用的镜像..."
             docker image prune -f
             
-            # 重新构建并启动所有服务（在根目录运行，docker-compose 会读取 .env）
+            # 重新构建并启动所有服务（明确指定 env 文件）
             echo "🔨 构建镜像并启动服务..."
-            docker-compose -f docker/docker-compose.yaml up -d --build
+            docker-compose -f docker/docker-compose.yaml --env-file .env up -d --build
             
             # 等待服务启动
             echo "⏳ 等待服务启动..."
@@ -62,7 +62,7 @@ jobs:
             
             # 检查服务状态
             echo "📊 检查服务状态..."
-            docker-compose -f docker/docker-compose.yaml ps
+            docker-compose -f docker/docker-compose.yaml --env-file .env ps
             
             echo ""
             echo "=========================================="
