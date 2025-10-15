@@ -9,6 +9,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=smart_healthcare.settings
 
+# 配置 Debian 国内镜像源（清华源）
+RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+    sed -i 's|security.debian.org/debian-security|mirrors.tuna.tsinghua.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources
+
 # 安装系统依赖（MySQL 客户端库需要）
 RUN apt-get update && apt-get install -y \
     gcc \

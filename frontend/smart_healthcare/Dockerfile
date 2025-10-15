@@ -1,6 +1,9 @@
 # 构建阶段
 FROM node:20-alpine as build-stage
 
+# 配置 Alpine 国内镜像源（清华源）
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+
 # 设置工作目录
 WORKDIR /app
 
@@ -21,6 +24,9 @@ RUN npm run build
 
 # 生产阶段
 FROM nginx:alpine as production-stage
+
+# 配置 Alpine 国内镜像源（清华源）
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 # 复制构建后的文件到 nginx
 COPY --from=build-stage /app/dist /usr/share/nginx/html
