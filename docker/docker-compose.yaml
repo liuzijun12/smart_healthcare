@@ -21,7 +21,7 @@ services:
       - ./mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
-      - healthcare_network
+      - smart_healthcare_network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
@@ -39,7 +39,7 @@ services:
       ADMINER_DEFAULT_SERVER: mysql
       ADMINER_DESIGN: nette
     networks:
-      - healthcare_network
+      - smart_healthcare_network
     depends_on:
       - mysql
 
@@ -61,7 +61,7 @@ services:
       - ./minio_data:/data
     command: server /data --console-address ":9001"
     networks:
-      - healthcare_network
+      - smart_healthcare_network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -94,7 +94,7 @@ services:
       # 挂载模型文件（确保模型文件持久化）
       - ../backend/app_ai/best_models:/app/app_ai/best_models
     networks:
-      - healthcare_network
+      - smart_healthcare_network
     depends_on:
       mysql:
         condition: service_healthy
@@ -115,11 +115,12 @@ services:
       - ../frontend/smart_healthcare:/app
       - /app/node_modules
     networks:
-      - healthcare_network
+      - smart_healthcare_network
     depends_on:
       - backend
 
 networks:
-  healthcare_network:
-    driver: bridge
+  smart_healthcare_network:
     name: smart_healthcare_network
+    # driver: bridge
+    external: true
