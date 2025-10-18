@@ -7,7 +7,9 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   // 加载环境变量
-  const env = loadEnv(mode, process.cwd() + '/../../', '')
+  // 从当前目录向上两级查找 .env 文件（项目根目录）
+  const envDir = fileURLToPath(new URL('../../', import.meta.url))
+  const env = loadEnv(mode, envDir, '')
   
   // 从环境变量中读取允许的主机列表
   const allowedHosts = env.FRONTEND_ALLOWED_HOSTS
