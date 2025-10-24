@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import HomePage from '../views/HomePage.vue'
 import PatientManagement from '../views/PatientManagement.vue'
 import AIDiagnosis from '../views/AIDiagnosis.vue'
 
@@ -7,6 +8,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: HomePage,
+    },
+    {
+      path: '/patient',
       name: 'patient',
       component: PatientManagement,
     },
