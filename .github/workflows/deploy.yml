@@ -38,23 +38,35 @@ jobs:
             git reset --hard origin/main || git reset --hard origin/master
             git pull origin main || git pull origin master
             
-            # 检查 .env 文件
-            if [ ! -f .env ]; then
-              echo "❌ 错误: .env 文件不存在，请先配置环境变量"
-              exit 1
+            # 检查并配置后端 .env 文件
+            if [ ! -f backend/.env ]; then
+              echo "⚠️  未找到 backend/.env 文件"
+              if [ -f backend/example.env ]; then
+                echo "📋 从 backend/example.env 复制配置..."
+                cp backend/example.env backend/.env
+                echo "✅ 已创建 backend/.env 文件"
+                echo "⚠️  警告: 请确保已修改 backend/.env 中的敏感配置（数据库密码、密钥等）"
+                echo "💡 提示: 可以使用以下命令编辑配置:"
+                echo "   vim backend/.env"
+              else
+                echo "❌ 错误: backend/example.env 模板文件不存在"
+                exit 1
+              fi
+            else
+              echo "✅ 检测到 backend/.env 文件已存在，保留现有配置"
             fi
             
-            # 停止现有容器（在根目录运行，明确指定 compose 文件和 env 文件）
+            # 停止现有容器（使用后端的 .env 文件）
             echo "⏸️  停止现有容器..."
-            docker-compose -f docker/docker-compose.yaml --env-file .env down
+            docker-compose -f docker/docker-compose.yaml down
             
             # 清理未使用的镜像
             echo "🧹 清理未使用的镜像..."
             docker image prune -f
             
-            # 重新构建并启动所有服务（明确指定 env 文件）
+            # 重新构建并启动所有服务
             echo "🔨 构建镜像并启动服务..."
-            docker-compose -f docker/docker-compose.yaml --env-file .env up -d --build
+            docker-compose -f docker/docker-compose.yaml up -d --build
             
             # 等待服务启动
             echo "⏳ 等待服务启动..."
@@ -62,7 +74,7 @@ jobs:
             
             # 检查服务状态
             echo "📊 检查服务状态..."
-            docker-compose -f docker/docker-compose.yaml --env-file .env ps
+            docker-compose -f docker/docker-compose.yaml ps
             
             echo ""
             echo "=========================================="
