@@ -21,6 +21,15 @@ wheels/
 *.egg
 MANIFEST
 
+# 虚拟环境
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
 # Django
 *.log
 local_settings.py

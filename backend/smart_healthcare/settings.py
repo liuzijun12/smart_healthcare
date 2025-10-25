@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 加载环境变量
 # Docker 环境下会通过 docker-compose 的 env_file 加载
 # 本地开发时从项目根目录的 .env 文件加载
-env_path = BASE_DIR.parent / '.env'  # 指向项目根目录的 .env
+env_path = BASE_DIR / '.env' # 指向项目根目录的 .env
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
 else:
@@ -50,9 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app_ai',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,6 +64,37 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS设置
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+# CSRF Cookie 配置（用于开发环境跨域）
+CSRF_COOKIE_SECURE = False  # 开发环境使用 HTTP，设为 False
+CSRF_COOKIE_HTTPONLY = False  # 允许 JavaScript 读取 cookie
+CSRF_USE_SESSIONS = False  # 不使用 session 存储 CSRF token
+CSRF_COOKIE_SAMESITE = None if DEBUG else 'Lax'  # 开发环境设为 None 完全允许跨域
+CSRF_COOKIE_DOMAIN = None  # 不限制域名
+CSRF_COOKIE_NAME = 'csrftoken'  # cookie 名称
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'  # 请求头名称
 
 ROOT_URLCONF = 'smart_healthcare.urls'
 
@@ -150,8 +184,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL_ORIGINS = DEBUG  # 开发环境允许所有源，生产环境需要指定
 
 # CSRF 配置
-CSRF_TRUSTED_ORIGINS = [
-    f'http://{host}' for host in ALLOWED_HOSTS if host not in ['*', 'localhost', '127.0.0.1']
-] + [
-    f'https://{host}' for host in ALLOWED_HOSTS if host not in ['*', 'localhost', '127.0.0.1']
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+for host in ALLOWED_HOSTS:
+    if host not in ['*', 'localhost', '127.0.0.1'] and host.strip():
+        CSRF_TRUSTED_ORIGINS.append(f'http://{host.strip()}')
+        CSRF_TRUSTED_ORIGINS.append(f'https://{host.strip()}')
