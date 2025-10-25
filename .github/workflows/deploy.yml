@@ -29,6 +29,30 @@ jobs:
             echo "  智能医疗系统 - 自动化部署"
             echo "=========================================="
             
+            # 检查并修复 Docker Compose
+            echo "🔍 检查 Docker Compose..."
+            if ! docker-compose --version 2>/dev/null | grep -q "version"; then
+              echo "⚠️  Docker Compose 损坏或不存在，正在修复..."
+              
+              # 删除损坏的文件
+              sudo rm -f /usr/local/bin/docker-compose
+              
+              # 重新安装 Docker Compose
+              echo "📥 下载 Docker Compose..."
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+              
+              # 验证安装
+              if docker-compose --version; then
+                echo "✅ Docker Compose 安装成功"
+              else
+                echo "❌ Docker Compose 安装失败"
+                exit 1
+              fi
+            else
+              echo "✅ Docker Compose 正常"
+            fi
+            
             # 进入项目目录
             cd ${{ secrets.DEPLOY_PATH || '/data/lzj/smart_healthcare' }}
             
