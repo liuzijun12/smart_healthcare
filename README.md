@@ -69,9 +69,17 @@ sudo sh get-docker.sh
 git clone https://github.com/your-username/smart_healthcare.git
 cd smart_healthcare
 
-# 3. 配置环境变量
-cp .env.example .env
-nano .env  # 修改配置
+# 3. 配置环境变量（重要！）
+cp backend/example.env backend/.env
+vim backend/.env  # 修改配置
+
+# 必须修改以下配置项：
+# - MYSQL_ROOT_PASSWORD=<设置强密码>
+# - DB_PASSWORD=<设置数据库密码>
+# - SECRET_KEY=<生成Django密钥>
+# - MINIO_ROOT_PASSWORD=<设置MinIO密码>
+# - DEBUG=False (生产环境)
+# - ALLOWED_HOSTS=<你的域名或IP>
 ```
 
 **GitHub 端：**
@@ -311,7 +319,7 @@ chore: 构建/工具链相关
 
 ### 环境变量说明
 
-所有环境变量统一在根目录的 `.env` 文件中配置：
+所有环境变量统一在 `backend/.env` 文件中配置：
 
 | 变量名 | 说明 | 默认值 |
 |--------|------|--------|

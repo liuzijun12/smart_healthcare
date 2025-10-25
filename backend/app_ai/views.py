@@ -15,6 +15,7 @@ def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
 
+
 @csrf_exempt  # 临时禁用 CSRF 验证，用于调试
 @require_http_methods(['POST'])
 def login(request):
