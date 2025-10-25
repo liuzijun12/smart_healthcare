@@ -58,7 +58,7 @@ jobs:
             
             # 停止现有容器（使用后端的 .env 文件）
             echo "⏸️  停止现有容器..."
-            docker-compose -f docker/docker-compose.yaml down
+            docker-compose -f docker/docker-compose.yaml --env-file backend/.env down
             
             # 清理未使用的镜像
             echo "🧹 清理未使用的镜像..."
@@ -66,7 +66,7 @@ jobs:
             
             # 重新构建并启动所有服务
             echo "🔨 构建镜像并启动服务..."
-            docker-compose -f docker/docker-compose.yaml up -d --build
+            docker-compose -f docker/docker-compose.yaml --env-file backend/.env up -d --build
             
             # 等待服务启动
             echo "⏳ 等待服务启动..."
@@ -74,7 +74,7 @@ jobs:
             
             # 检查服务状态
             echo "📊 检查服务状态..."
-            docker-compose -f docker/docker-compose.yaml ps
+            docker-compose -f docker/docker-compose.yaml --env-file backend/.env ps
             
             echo ""
             echo "=========================================="
